@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KMZ Converter</title>
+    <style>
+        body {
+            background-color: #1a1a1a; /* Dark background color */
+            color: #fff; /* White text */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+        }
+        .container {
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        .upload-box {
+            width: 300px;
+            padding: 50px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            text-align: center;
+            margin: 0 auto 20px;
+            cursor: pointer;
+        }
+        .upload-box.dragover {
+            border-color: #000;
+        }
+        input[type=file] {
+            display: none;
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 100px; /* Adjust size as needed */
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>KMZ Converter</h1>
+        </div>
+        <img src="{{ url_for('static', filename='CIR_Logo.jpg') }}" alt="Company Logo" class="logo">
+        <div class="upload-box" id="upload-box">
+            Drag and drop your KMZ file here or click to select
+        </div>
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="file-input" accept=".kmz">
+        </form>
+    </div>
+    <script>
+        const uploadBox = document.getElementById('upload-box');
+        const fileInput = document.getElementById('file-input');
+        const uploadForm = document.getElementById('upload-form');
+
+        uploadBox.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                uploadForm.submit();
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                uploadForm.submit();
+                fileInput.value = ''; // Clear the file input after submission
+            } else {
+                console.log('No file selected or upload cancelled.');
+                // Optionally handle this case visually or with a message
+            }
+        });
+    </script>
+</body>
+</html>
